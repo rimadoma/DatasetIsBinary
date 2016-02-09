@@ -19,6 +19,8 @@ import net.imglib2.type.numeric.real.FloatType;
 import org.scijava.AbstractContextual;
 import org.scijava.plugin.Parameter;
 
+import javax.annotation.Nullable;
+
 /**
  * A utility class that can be used to automatically create different types of Datasets.
  * Handy for, e.g. testing.
@@ -28,7 +30,6 @@ import org.scijava.plugin.Parameter;
  * @todo    Extend to NativeType<T>?
  * @todo    VolatileRealType?
  * @todo    UnsignedVariableBitLengthType?
- * @todo    Add Nullable annotations, fix javax.annotations Maven issue
  * @author  Richard Domander
  */
 public final class DatasetCreator extends AbstractContextual {
@@ -45,6 +46,7 @@ public final class DatasetCreator extends AbstractContextual {
      * Creates a Dataset of the given type with the default dimensions (X = 10, Y = 10, Z = 10)
      * @see DatasetCreator#createDataset(DatasetType, AxisType[], long[])
      */
+    @Nullable
     public Dataset createDataset(DatasetType type) {
         return createDataset(type, DEFAULT_AXES, DEFAULT_DIMS);
     }
@@ -58,6 +60,7 @@ public final class DatasetCreator extends AbstractContextual {
      * @param dimensions    The sizes of the dimensions in the Dataset
      * @return A new Dataset, or null if type is not recognized
      */
+    @Nullable
     public Dataset createDataset(DatasetType type, AxisType[] axesTypes, long[] dimensions) 
             throws NullPointerException {
         checkNotNull(datasetService, "No datasetService available - did you call setContext?");
