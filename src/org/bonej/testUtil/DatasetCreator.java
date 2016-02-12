@@ -3,6 +3,7 @@ package org.bonej.testUtil;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Random;
 
 import net.imagej.Dataset;
@@ -43,8 +44,7 @@ public final class DatasetCreator extends AbstractContextual {
      * Creates an empty Dataset of the given type
      * @see DatasetCreator#createDataset(DatasetType, AxisType[], long[])
      */
-    @Nullable
-    public Dataset createEmptyDataset(DatasetType type) {
+    public Optional<Dataset> createEmptyDataset(DatasetType type) {
         return createDataset(type, new AxisType[]{Axes.X, Axes.Y}, new long[]{0, 0});
     }
 
@@ -52,61 +52,85 @@ public final class DatasetCreator extends AbstractContextual {
      * Creates a Dataset of the given type with the default dimensions (X = 10, Y = 10, Z = 10)
      * @see DatasetCreator#createDataset(DatasetType, AxisType[], long[])
      */
-    @Nullable
-    public Dataset createDataset(DatasetType type) {
+    public Optional<Dataset> createDataset(DatasetType type) {
         return createDataset(type, DEFAULT_AXES, DEFAULT_DIMS);
     }
 
     /**
-     * Creates a Dataset with three spatial dimensions (X, Y, Z) of the given type.
+     * Creates a Dataset with the given type, axes and dimensions
      *
      * @throws              NullPointerException if there's no DatasetService
+     * @throws              NullPointerException if any of the parameters is null
      * @param type          The type of the Dataset - see Dataset#DatasetType
      * @param axesTypes     The types of the dimensions in the Dataset
      * @param dimensions    The sizes of the dimensions in the Dataset
-     * @return A new Dataset, or null if type is not recognized
+     * @return An Optional with a new Dataset available if type is recognized
      */
-    @Nullable
-    public Dataset createDataset(DatasetType type, AxisType[] axesTypes, long[] dimensions) 
+    public Optional<Dataset> createDataset(DatasetType type, AxisType[] axesTypes, long[] dimensions)
             throws NullPointerException {
         checkNotNull(datasetService, "No datasetService available - did you call setContext?");
+        checkNotNull(type, "Can't create a dataset: type is null");
+        checkNotNull(axesTypes, "Can't create a dataset: axesTypes is null");
+        checkNotNull(dimensions, "Can't create a dataset: dimensions is null");
+
+        Dataset dataset;
 
         switch (type) {
             case BIT:
-                return datasetService.create(new BitType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new BitType(), dimensions, "Dataset", axesTypes);
+                break;
             case BYTE:
-                return datasetService.create(new ByteType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new ByteType(), dimensions, "Dataset", axesTypes);
+                break;
             case DOUBLE:
-                return datasetService.create(new DoubleType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new DoubleType(), dimensions, "Dataset", axesTypes);
+                break;
             case FLOAT:
-                return datasetService.create(new FloatType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new FloatType(), dimensions, "Dataset", axesTypes);
+                break;
             case INT:
-                return datasetService.create(new IntType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new IntType(), dimensions, "Dataset", axesTypes);
+                break;
             case LONG:
-                return datasetService.create(new LongType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new LongType(), dimensions, "Dataset", axesTypes);
+                break;
             case SHORT:
-                return datasetService.create(new ShortType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new ShortType(), dimensions, "Dataset", axesTypes);
+                break;
             case UNSIGNED_128_BIT:
-                return datasetService.create(new Unsigned128BitType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new Unsigned128BitType(), dimensions, "Dataset", axesTypes);
+                break;
             case UNSIGNED_12_BIT:
-                return datasetService.create(new Unsigned12BitType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new Unsigned12BitType(), dimensions, "Dataset", axesTypes);
+                break;
             case UNSIGNED_2_BIT:
-                return datasetService.create(new Unsigned2BitType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new Unsigned2BitType(), dimensions, "Dataset", axesTypes);
+                break;
             case UNSIGNED_4_BIT:
-                return datasetService.create(new Unsigned4BitType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new Unsigned4BitType(), dimensions, "Dataset", axesTypes);
+                break;
             case UNSIGNED_BYTE:
-                return datasetService.create(new UnsignedByteType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new UnsignedByteType(), dimensions, "Dataset", axesTypes);
+                break;
             case UNSIGNED_SHORT:
-                return datasetService.create(new UnsignedShortType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new UnsignedShortType(), dimensions, "Dataset", axesTypes);
+                break;
             case UNSIGNED_INT:
-                return datasetService.create(new UnsignedIntType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new UnsignedIntType(), dimensions, "Dataset", axesTypes);
+                break;
             case UNSIGNED_LONG:
-                return datasetService.create(new UnsignedLongType(), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new UnsignedLongType(), dimensions, "Dataset", axesTypes);
+                break;
             case UNSIGNED_VARIABLE_BIT_LENGTH:
-                return datasetService.create(new UnsignedVariableBitLengthType(64), dimensions, "Dataset", axesTypes);
+                dataset = datasetService.create(new UnsignedVariableBitLengthType(64), dimensions, "Dataset",
+                        axesTypes);
+                break;
             default:
-                return null;
+                dataset = null;
+                break;
         }
+
+        return Optional.ofNullable(dataset);
     }
 
     /**

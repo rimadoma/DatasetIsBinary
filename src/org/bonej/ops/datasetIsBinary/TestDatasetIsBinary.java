@@ -46,7 +46,7 @@ public class TestDatasetIsBinary {
 
     @Test
     public void testEmptyDatasetFails() throws AssertionError {
-        dataset = datasetCreator.createEmptyDataset(DatasetType.BIT);
+        dataset = datasetCreator.createEmptyDataset(DatasetType.BIT).get();
 
         final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
         assertFalse("Empty dataset is not binary", result);
@@ -56,7 +56,7 @@ public class TestDatasetIsBinary {
     public void testDatasetWithOneValuePasses() throws AssertionError {
         final int minValue = 1;
         final int maxValue = 1;
-        dataset = datasetCreator.createDataset(DatasetType.BIT);
+        dataset = datasetCreator.createDataset(DatasetType.BIT).get();
         DatasetCreator.fillWithRandomWholeNumbers(dataset, minValue, maxValue);
 
         final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
@@ -68,7 +68,7 @@ public class TestDatasetIsBinary {
     public void testDatasetWithTwoValuesPasses() throws AssertionError {
         final int minValue = 0;
         final int maxValue = 1;
-        dataset = datasetCreator.createDataset(DatasetType.BIT);
+        dataset = datasetCreator.createDataset(DatasetType.BIT).get();
         DatasetCreator.fillWithRandomWholeNumbers(dataset, minValue, maxValue);
 
         final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
@@ -80,7 +80,7 @@ public class TestDatasetIsBinary {
     public void testInvalidDatasetTypesFail() throws AssertionError {
         final Stream<DatasetType> allTypes = Arrays.stream(DatasetType.values());
         allTypes.filter(t -> t != DatasetType.BIT).forEach( type -> {
-            dataset = datasetCreator.createDataset(type);
+            dataset = datasetCreator.createDataset(type).get();
             final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
             final String typeClassName = dataset.getType().getClass().getName();
             assertFalse("A Dataset of type " + typeClassName + " should not be binary", result);
