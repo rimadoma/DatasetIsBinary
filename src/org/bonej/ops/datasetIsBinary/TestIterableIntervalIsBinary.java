@@ -10,8 +10,14 @@ import net.imagej.Dataset;
 import net.imagej.ImageJ;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
+import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
+import net.imglib2.img.basictypeaccess.array.ByteArray;
+import net.imglib2.img.planar.PlanarImg;
+import net.imglib2.img.planar.PlanarImgFactory;
 import net.imglib2.type.logic.BitType;
 
+import net.imglib2.type.numeric.integer.ByteType;
+import net.imglib2.util.Fraction;
 import org.bonej.testUtil.DatasetCreator;
 import org.bonej.testUtil.DatasetCreator.DatasetType;
 import org.junit.After;
@@ -24,7 +30,7 @@ import org.junit.Test;
  *
  * @author Richard Domander
  */
-public class TestDatasetIsBinary {
+public class TestIterableIntervalIsBinary {
     private static final ImageJ ij = new ImageJ();
     private static Dataset dataset = null;
     private static final DatasetCreator datasetCreator = new DatasetCreator();
@@ -46,44 +52,42 @@ public class TestDatasetIsBinary {
 
     @Test
     public void testEmptyDatasetFails() throws AssertionError {
-        dataset = datasetCreator.createEmptyDataset(DatasetType.BIT).get();
+        final long[] dims = {0, 0};
+        PlanarImg planarImg = new PlanarImg(dims, new Fraction());
 
-        final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
-        assertFalse("Empty dataset is not binary", result);
+        final boolean result = (boolean) ij.op().run(IterableIntervalIsBinary.class, planarImg);
+        assertFalse("Empty interval is not binary", result);
     }
 
     @Test
-    public void testDatasetWithOneValuePasses() throws AssertionError {
+    public void testIntervalWithOneValuePasses() throws AssertionError {
         final int minValue = 1;
         final int maxValue = 1;
         dataset = datasetCreator.createDataset(DatasetType.BIT).get();
         DatasetCreator.fillWithRandomWholeNumbers(dataset, minValue, maxValue);
 
-        final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
+        final boolean result = (boolean) ij.op().run(IterableIntervalIsBinary.class, dataset);
 
-        assertTrue("A Dataset with one distinct value is binary", result);
+        assertTrue("An interval with one distinct value is binary", result);
     }
 
     @Test
-    public void testDatasetWithTwoValuesPasses() throws AssertionError {
+    public void testIntervalWithTwoValuesPasses() throws AssertionError {
         final int minValue = 0;
         final int maxValue = 1;
         dataset = datasetCreator.createDataset(DatasetType.BIT).get();
         DatasetCreator.fillWithRandomWholeNumbers(dataset, minValue, maxValue);
 
-        final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
+        final boolean result = (boolean) ij.op().run(IterableIntervalIsBinary.class, dataset);
 
         assertTrue("A Dataset with two distinct values is binary", result);
     }
 
     @Test
-    public void testInvalidDatasetTypesFail() throws AssertionError {
-        final Stream<DatasetType> allTypes = Arrays.stream(DatasetType.values());
-        allTypes.filter(t -> t != DatasetType.BIT).forEach( type -> {
-            dataset = datasetCreator.createDataset(type).get();
-            final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
-            final String typeClassName = dataset.getType().getClass().getName();
-            assertFalse("A Dataset of type " + typeClassName + " should not be binary", result);
-        });
+    public void testIntervalWithMoreThanTwoValuesFails() throws AssertionError {
+        PlanarImg planarImg = new PlanarImgFactory().create(new long[]{3}, new ByteType());
+        planarImg.setPlane(0, new ByteArray(new byte[]{0, 1, 2}));
+        final boolean result = (boolean) ij.op().run(IterableIntervalIsBinary.class, planarImg);
+        assertFalse("An interval with more than two distinct values is not binary", result);
     }
 }
