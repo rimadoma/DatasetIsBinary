@@ -102,22 +102,47 @@ public final class DatasetCreator extends AbstractContextual {
     }
 
     /**
-     * Fills the elements in the given Dataset with random integers.
+     * Fills the elements in the given Dataset with random whole numbers.
      *
+     * @implNote        Min and max values are clamped to prevent under - and overflow.
+     *                  E.g. If maxValue == 1000 and dataset type == UnsignedByteType, then maxValue = 255
      * @param minValue  Minimum value of the random numbers (inclusive)
      * @param maxValue  Maximum value of the random numbers (inclusive)
      */
-    public static void fillWithRandomIntegers(final Dataset dataset, final int minValue, final int maxValue) {
+    public static void fillWithRandomWholeNumbers(@Nullable final Dataset dataset, long minValue, long maxValue) {
         if (dataset == null) {
             return;
         }
 
         final Cursor<RealType<?>> cursor = dataset.cursor();
+        if (!cursor.hasNext()) {
+            return;
+        }
 
-        final Iterator<Integer> randomIterator =
-                new Random(System.currentTimeMillis()).ints(minValue, maxValue + 1).iterator();
+        cursor.fwd();
+        final RealType<?> element = cursor.next();
+        final long typeMin = (long) element.getMinValue();
+        final long typeMax = (long) element.getMaxValue();
+        minValue = clamp(minValue, typeMin, typeMax);
+        maxValue = clamp(maxValue, typeMin, typeMax);
+        cursor.reset();
+
+        long exclusiveMax = maxValue + 1;
+
+        final Iterator<Long> randomIterator =
+                new Random(System.currentTimeMillis()).longs(minValue, exclusiveMax).iterator();
 
         cursor.forEachRemaining(c -> c.setReal(randomIterator.next()));
+    }
+
+    private static long clamp(long value, long min, long max) {
+        if (value < min) {
+            return min;
+        }
+        if (value > max) {
+            return max;
+        }
+        return value;
     }
 
     /**

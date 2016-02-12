@@ -59,7 +59,7 @@ public class TestDatasetIsBinary {
         final int minValue = 1;
         final int maxValue = 1;
         dataset = datasetCreator.createDataset(DatasetType.BIT);
-        DatasetCreator.fillWithRandomIntegers(dataset, minValue, maxValue);
+        DatasetCreator.fillWithRandomWholeNumbers(dataset, minValue, maxValue);
 
         final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
 
@@ -71,7 +71,7 @@ public class TestDatasetIsBinary {
         final int minValue = 0;
         final int maxValue = 1;
         dataset = datasetCreator.createDataset(DatasetType.BIT);
-        DatasetCreator.fillWithRandomIntegers(dataset, minValue, maxValue);
+        DatasetCreator.fillWithRandomWholeNumbers(dataset, minValue, maxValue);
 
         final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
 
