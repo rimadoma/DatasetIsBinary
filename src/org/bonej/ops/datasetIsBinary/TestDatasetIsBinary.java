@@ -46,9 +46,7 @@ public class TestDatasetIsBinary {
 
     @Test
     public void testEmptyDatasetFails() throws AssertionError {
-        final long[] dims = {0, 0};
-        final AxisType[] axisTypes = {Axes.X, Axes.Y};
-        dataset = ij.dataset().create(new BitType(), dims, "Test set", axisTypes);
+        dataset = datasetCreator.createEmptyDataset(DatasetType.BIT);
 
         final boolean result = (boolean) ij.op().run(DatasetIsBinary.class, dataset);
         assertFalse("Empty dataset is not binary", result);

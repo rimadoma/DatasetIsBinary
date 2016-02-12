@@ -40,6 +40,15 @@ public final class DatasetCreator extends AbstractContextual {
     private DatasetService datasetService = null;
 
     /**
+     * Creates an empty Dataset of the given type
+     * @see DatasetCreator#createDataset(DatasetType, AxisType[], long[])
+     */
+    @Nullable
+    public Dataset createEmptyDataset(DatasetType type) {
+        return createDataset(type, new AxisType[]{Axes.X, Axes.Y}, new long[]{0, 0});
+    }
+
+    /**
      * Creates a Dataset of the given type with the default dimensions (X = 10, Y = 10, Z = 10)
      * @see DatasetCreator#createDataset(DatasetType, AxisType[], long[])
      */
