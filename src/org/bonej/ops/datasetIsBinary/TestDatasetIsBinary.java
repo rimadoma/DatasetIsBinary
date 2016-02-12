@@ -78,9 +78,6 @@ public class TestDatasetIsBinary {
         assertTrue("A Dataset with two distinct values is binary", result);
     }
 
-    /**
-     * @implNote Not totally exhaustive, because the DatasetCreator doesn't handle all RealType subtypes
-     */
     @Test
     public void testInvalidDatasetTypesFail() throws AssertionError {
         final Stream<DatasetType> allTypes = Arrays.stream(DatasetType.values());

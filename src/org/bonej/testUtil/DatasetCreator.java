@@ -27,9 +27,6 @@ import javax.annotation.Nullable;
  *
  * Call setContext before creating Datasets.
  *
- * @todo    Extend to NativeType<T>?
- * @todo    VolatileRealType?
- * @todo    UnsignedVariableBitLengthType?
  * @author  Richard Domander
  */
 public final class DatasetCreator extends AbstractContextual {
@@ -96,6 +93,8 @@ public final class DatasetCreator extends AbstractContextual {
                 return datasetService.create(new UnsignedIntType(), dimensions, "Dataset", axesTypes);
             case UNSIGNED_LONG:
                 return datasetService.create(new UnsignedLongType(), dimensions, "Dataset", axesTypes);
+            case UNSIGNED_VARIABLE_BIT_LENGTH:
+                return datasetService.create(new UnsignedVariableBitLengthType(64), dimensions, "Dataset", axesTypes);
             default:
                 return null;
         }
@@ -145,10 +144,6 @@ public final class DatasetCreator extends AbstractContextual {
         return value;
     }
 
-    /**
-     * Instead using a hacky enum, it'd be ideal to have a method with a RealType<?> parameter,
-     * which would then somehow create a Dataset based on the runtime type of that parameter.
-     */
     public enum DatasetType {
         BIT,
         BYTE,
@@ -164,6 +159,7 @@ public final class DatasetCreator extends AbstractContextual {
         UNSIGNED_BYTE,
         UNSIGNED_SHORT,
         UNSIGNED_INT,
-        UNSIGNED_LONG
+        UNSIGNED_LONG,
+        UNSIGNED_VARIABLE_BIT_LENGTH
     }
 }
