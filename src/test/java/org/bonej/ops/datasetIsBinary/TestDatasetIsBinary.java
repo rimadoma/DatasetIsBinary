@@ -8,9 +8,6 @@ import java.util.stream.Stream;
 
 import net.imagej.Dataset;
 import net.imagej.ImageJ;
-import net.imagej.axis.Axes;
-import net.imagej.axis.AxisType;
-import net.imglib2.type.logic.BitType;
 
 import org.bonej.testUtil.DatasetCreator;
 import org.bonej.testUtil.DatasetCreator.DatasetType;
